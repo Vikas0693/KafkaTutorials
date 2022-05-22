@@ -1,0 +1,98 @@
+plugins {
+	id "com.github.davidmc24.gradle.plugin.avro" version "1.3.0"
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+
+
+ext {
+  kafkaVersion = '2.7.0'
+}
+
+repositories{
+	mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies{
+ 	
+ 	implementation "org.apache.kafka:kafka-streams:${kafkaVersion}"
+ 	
+ 	// logging
+  	implementation 'ch.qos.logback:logback-classic:1.2.3'
+  	
+  	// required for JSON serializer
+  	implementation 'com.google.code.gson:gson:2.8.5'
+  	
+	// required for language translation
+	implementation 'com.google.cloud:google-cloud-translate:1.94.5'
+	implementation 'com.google.cloud:libraries-bom:3.4.0@pom'
+	
+	//avro serialization class, that converts avro generated class to byte format for kafka
+	implementation 'com.mitchseymour:kafka-registryless-avro-serdes:1.0.0'
+	
+	// to generate avro class from schema
+	implementation 'org.apache.avro:avro:1.11.0'
+ 	
+	testImplementation "junit:junit:4.12"
+}
+
+
+
+task runV1(type: JavaExec) {
+	description = "V1 will simply connect with Kafka topic of 'tweets', where records will be generated to 'tweets' via a file saved under resources."
+    main = 'com.crypto.AppMain'
+    classpath sourceSets.main.runtimeClasspath
+    args "v1"
+}
+
+task runV2(type: JavaExec) {
+	description = "V2 will in addition to V1 will do deserialization to convert byte to json to Tweet object."
+    main = 'com.crypto.AppMain'
+    classpath sourceSets.main.runtimeClasspath
+    args "v2"
+}
+
+task runV3(type: JavaExec) {
+	description = "V3 will in addition to V2 will do filtering , not including retweets in stream."
+    main = 'com.crypto.AppMain'
+    classpath sourceSets.main.runtimeClasspath
+    args "v3"
+}
+
+task runV4(type: JavaExec) {
+	description = "V4 will in addition to V3 will create branches for english and non english tweet."
+    main = 'com.crypto.AppMain'
+    classpath sourceSets.main.runtimeClasspath
+    args "v4"
+}
+
+task runV5(type: JavaExec) {
+	description = "V5 will in addition to V4 will create translated stream which has non-english to english converted tweets."
+    main = 'com.crypto.AppMain'
+    classpath sourceSets.main.runtimeClasspath
+    args "V5"
+}
+
+task runV6(type: JavaExec) {
+	description = "V6 will in addition to V5 will create Create poosible sentiments from each record , hence the use of flatMapVaues."
+    main = 'com.crypto.AppMain'
+    classpath sourceSets.main.runtimeClasspath
+    args "V6"
+}
+
+task runV7(type: JavaExec) {
+	description = "V7 will in addition to V6 will send records to crypto-sentiment using avro serdes."
+    main = 'com.crypto.AppMain'
+    classpath sourceSets.main.runtimeClasspath
+    args "V7"
+}
+
+/*jar{
+	archiveBaseName = 'twittersentiment_kafka'
+	archiveVersion = '0.1.0'
+}*/
