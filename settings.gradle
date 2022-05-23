@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'KafkaEBookTutorial'
-include 'twitter-crypto-streams'
+include 'twitter-crypto-streams', 'stateful-processing'
